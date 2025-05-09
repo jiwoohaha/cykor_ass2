@@ -1,28 +1,27 @@
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-#include <direct.h>
+#include <unistd.h>
 #include <string.h>
-#include <io.h>
-#include <process.h>
 #define MAX 300
 int pwd(char* token[], int num);
 int cd(char* token[], int num);
 void prindir(void);
-int dividepipe(char* token[]) //ÆÄÀÌÇÁ¶óÀÎ ³ª´©±â
+int dividepipe(char* token[]) //íŒŒì´í”„ë¼ì¸ ë‚˜ëˆ„ê¸°
 {
 
 }
-void pipeline(char* token[]) //ÆÄÀÌÇÁ¶óÀÎ ±¸Çö
+void pipeline(char* token[]) //íŒŒì´í”„ë¼ì¸ êµ¬í˜„
 {
 	
 }
-void addspace(char* line) //´ÙÁß ¸í·É¾î¶û ÆÄÀÌÇÁ¶óÀÎ ¾ç¿·À¸·Î °ø¹é Ãß°¡
+void addspace(char* line) //ë‹¤ì¤‘ ëª…ë ¹ì–´ë‘ íŒŒì´í”„ë¼ì¸ ì–‘ì˜†ìœ¼ë¡œ ê³µë°± ì¶”ê°€
 {
 	char buf[MAX * 2] = { 0 };
 	int j = 0;
 	for (int i = 0; line[i] != NULL; i++) {
-		// && ¶Ç´Â || Ã³¸®
+		// && ë˜ëŠ” || ì²˜ë¦¬
 		if ((line[i] == '&' && line[i + 1] == '&') ||
 			(line[i] == '|' && line[i + 1] == '|')) 
 		{
@@ -31,7 +30,7 @@ void addspace(char* line) //´ÙÁß ¸í·É¾î¶û ÆÄÀÌÇÁ¶óÀÎ ¾ç¿·À¸·Î °ø¹é Ãß°¡
 			buf[j++] = line[i];
 			buf[j++] = ' ';
 		}
-		// ´ÜÀÏ |, ;, , Ã³¸®
+		// ë‹¨ì¼ |, ;, , ì²˜ë¦¬
 		else if (line[i] == '|' || line[i] == ';' || line[i] == ',')
 		{
 			buf[j++] = ' ';
@@ -56,14 +55,14 @@ int yesnopipe(char* token[])
 	}
 	for (int p = 0; token[p] != NULL; p++)
 	{
-		if (token[p] == '|')   // | ÀÖÀ¸¸é ÆÄÀÌÇÁ·Î ¤¡¤¡
+		if (token[p] == '|')   // | ìˆìœ¼ë©´ íŒŒì´í”„ë¡œ ã„±ã„±
 		{
 			return  dividepipe(token);
 			break;
 		}
 		check2++;
 	}
-	if (check1 == check2)   //  check1==check2 Áï ÆÄÀÌÇÁ ¾øÀ¸¸é ±×³É ¾ø´Â°É·Î ¤¡¤¡
+	if (check1 == check2)   //  check1==check2 ì¦‰ íŒŒì´í”„ ì—†ìœ¼ë©´ ê·¸ëƒ¥ ì—†ëŠ”ê±¸ë¡œ ã„±ã„±
 	{
 		return prompt(token);
 	}
@@ -71,8 +70,8 @@ int yesnopipe(char* token[])
 int prompt(char* token[])
 {
 
-	int num = 0; //token ÀÎÀÚ ¸î°³ÀÎÁö
-	while (token[num] != NULL) //token ÀÎÀÚ °³¼ö ¼¼±â
+	int num = 0; //token ì¸ì ëª‡ê°œì¸ì§€
+	while (token[num] != NULL) //token ì¸ì ê°œìˆ˜ ì„¸ê¸°
 	{
 		num++;
 	}
@@ -90,7 +89,7 @@ int prompt(char* token[])
 			return 0;
 	}
 }
-void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú ¿À¸¥ÂÊÀ¸·Î ³ª´®
+void mulprom(char* token[])    //ë‹¤ì¤‘ ëª…ë ¹ì–´ ì²˜ë¦¬ = ë‹¤ì¤‘ ëª…ë ¹ì–´ ê¸°ì¤€ìœ¼ë¡œ ì™¼ìª½ê³¼ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ë‚˜ëˆ”
 {
 	int nomulti = 0;
 	char* sorttok[MAX] = { 0 };
@@ -111,7 +110,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 				sorttok2[a] = token[a + i + 1];
 				++endcheck;
 			}
-			sorttok[i] = NULL;   // ³¡ Ã¼Å©
+			sorttok[i] = NULL;   // ë ì²´í¬
 			sorttok2[endcheck] = NULL;
 			int check;
 			check = yesnopipe(sorttok);
@@ -136,7 +135,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 				sorttok2[a] = token[a + i + 1];
 				++endcheck;
 			}
-			sorttok[i] = NULL;   // ³¡ Ã¼Å©
+			sorttok[i] = NULL;   // ë ì²´í¬
 			sorttok2[endcheck] = NULL;
 			int check;
 			check = yesnopipe(sorttok);
@@ -160,7 +159,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 				sorttok2[a] = token[a + i + 1];
 				++endcheck;
 			}
-			sorttok[i] = NULL;   // ³¡ Ã¼Å©
+			sorttok[i] = NULL;   // ë ì²´í¬
 			sorttok2[endcheck] = NULL;
 			int check;
 			check = yesnopipe(sorttok);
@@ -182,7 +181,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 				sorttok2[a] = token[a + i + 1];
 				++endcheck;
 			}
-			sorttok[i] = NULL;   // ³¡ Ã¼Å©
+			sorttok[i] = NULL;   // ë ì²´í¬
 			sorttok2[endcheck] = NULL;
 			int check;
 			check = yesnopipe(sorttok);
@@ -205,14 +204,14 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 		int check;
 		if (num > 3)
 		{
-			fprintf(stderr, "cd:too many ÀÎÀÚ");
+			fprintf(stderr, "cd:too many ì¸ì");
 		}
 		if (num == 1)
 		{
-			target = getenv("USERPROFILE");
-			if (!target) //getenv ´Â ½ÇÆĞ½Ã NULL ¹İÈ¯ÇÏ´Ï±î
+			target = getenv("HOME");
+			if (!target) //getenv ëŠ” ì‹¤íŒ¨ì‹œ NULL ë°˜í™˜í•˜ë‹ˆê¹Œ
 			{
-				fprintf(stderr, "cd:ÀÌµ¿ ½ÇÆĞ\n");
+				fprintf(stderr, "cd:ì´ë™ ì‹¤íŒ¨\n");
 				return 0;
 			}
 		}
@@ -220,7 +219,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 		{
 			target = token[1];
 		}
-		else //ÀÎÀÚ°¡ 3°³ÀÎ °æ¿ì  -> ¿¹¸¦µé¾î cd -L .   ÀÌ·±°æ¿ì´Â °Ë»öÀ¸·Î ¾Ë¾Ò½À´Ï´Ù.
+		else //ì¸ìê°€ 3ê°œì¸ ê²½ìš°  -> ì˜ˆë¥¼ë“¤ì–´ cd -L .   ì´ëŸ°ê²½ìš°ëŠ” ê²€ìƒ‰ìœ¼ë¡œ ì•Œì•˜ìŠµë‹ˆë‹¤.
 		{
 			if (strcmp(token[1], "-L") == 0 || strcmp(token[1], "-P") == 0)
 			{
@@ -233,7 +232,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 
 			}
 		}
-		check = _chdir(target);
+		check = chdir(target);
 		if (check == 0)
 		{
 			return 1;
@@ -258,7 +257,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 		}
 	}
 
-	void scan(void)   //½ºÄµÇÏ°í, ¶ç¾î¾²±â Á¦°Å, ÅäÅ«À¸·Î ºĞ·ù
+	void scan(void)   //ìŠ¤ìº”í•˜ê³ , ë„ì–´ì“°ê¸° ì œê±°, í† í°ìœ¼ë¡œ ë¶„ë¥˜
 	{
 
 		char line[MAX];
@@ -267,7 +266,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 		while (1)
 		{
 			if (!fgets(line, sizeof(line), stdin)) break;
-			line[strcspn(line, "\n")] = NULL; // \n Á¦°Å
+			line[strcspn(line, "\n")] = NULL; // \n ì œê±°
 			addspace(line);
 			int i = 0;
 			char* token = strtok(line, " ");
@@ -279,7 +278,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 			nospace[i] = NULL;
 
 			for (int j = 0; j < i; j++)
-				printf("ÅäÅ«[%d]: %s\n", j, nospace[j]);
+				printf("í† í°[%d]: %s\n", j, nospace[j]);
 			mulprom(nospace);
 			prindir();
 		}
@@ -289,7 +288,7 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 	void prindir(void)
 	{
 		char dirarr[MAX];
-		if (_getcwd(dirarr, sizeof(dirarr)) != NULL)
+		if (getcwd(dirarr, sizeof(dirarr)) != NULL)
 		{
 			printf("%s", dirarr);
 		}
@@ -307,4 +306,3 @@ void mulprom(char* token[])    //´ÙÁß ¸í·É¾î Ã³¸® = ´ÙÁß ¸í·É¾î ±âÁØÀ¸·Î ¿ŞÂÊ°ú 
 		prindir();
 		scan();
 	}
- 
