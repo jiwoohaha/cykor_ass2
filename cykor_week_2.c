@@ -1,20 +1,59 @@
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 #define MAX 300
 int pwd(char* token[], int num);
 int cd(char* token[], int num);
 void prindir(void);
+void pipeline(char* cmds[][MAX],int cmd);
 int dividepipe(char* token[]) //파이프라인 나누기
 {
+int a=0; // 파이프 개수
+for(int i=0;token[i]!=NULL;i++)
+{
+	if(strcmp(token[i],"|")==0)   //문자열을 비교하기 위해 큰따옴표로 해야 한다고 함.
+	{
+		a++;
+	}
+}
+int b = a+1; // b는 인자 개수
+if(b>20)
+{
+	fprintf(stderr,"에러:파이프라인은은 최대 20개입니다.");
+	return 0;
+}
+char* cmds[20][MAX]; // 각각의 인자들을 담는 배열
+int cmd=0,cmdline=0; // cmd는 명령어 단위, cmdline 은 명령어 인자 
+for (int i = 0; token[i] != NULL; i++) {
+	if (strcmp(token[i], "|") == 0) {
+		cmds[cmd][cmdline] = NULL;  // 현재 명령어 끝 표시
+		cmd++;               
+		cmdline = 0;            
+	} else {
+		cmds[cmd][cmdline++] = token[i];
+	}
+}
+cmds[cmd][cmdline] = NULL; 
+pipeline(cmds,b);
+// 마지막 명령어 끝 표시 << 이거 안하면 에러 남
+
+// printf("파이프라인 개수: %d\n", a);
+// for (int i = 0; i < b; i++) {
+// 	printf("명령[%d]:", i);
+// 	for (int j = 0; cmds[i][j] != NULL; j++) {
+// 		printf(" %s", cmds[i][j]);
+// 	}
+// 	printf("\n");
+// }
+
 
 }
-void pipeline(char* token[]) //파이프라인 구현
+void pipeline(char* cmds[][MAX],int cmd) //파이프라인 구현
 {
-	
+
 }
 void addspace(char* line) //다중 명령어랑 파이프라인 양옆으로 공백 추가
 {
@@ -55,7 +94,7 @@ int yesnopipe(char* token[])
 	}
 	for (int p = 0; token[p] != NULL; p++)
 	{
-		if (token[p] == '|')   // | 있으면 파이프로 ㄱㄱ
+		if (strcmp(token[p], "|") == 0)   // | 있으면 파이프로 ㄱㄱ
 		{
 			return  dividepipe(token);
 			break;
@@ -303,6 +342,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 
 	int main(void)
 	{
+		printf("ㅎ");
 		prindir();
 		scan();
 	}
