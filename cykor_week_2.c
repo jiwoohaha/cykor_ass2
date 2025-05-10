@@ -417,5 +417,6 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 
 	int main(void)
 	{
+		prindir();
 		scan();
 	}
