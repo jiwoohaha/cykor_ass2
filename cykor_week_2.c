@@ -9,6 +9,18 @@ int pwd(char* token[], int num);
 int cd(char* token[], int num);
 void prindir(void);
 void pipeline(char* cmds[][MAX],int cmd);
+void goback(char* token[]) {
+    pid_t pid = fork();
+    if (pid < 0) {
+        perror("fork");
+        return;
+    }
+    if (pid == 0) {
+        // 자식 프로세스: 백그라운드로 멀티/파이프라인 처리
+        mulprom(token);
+        exit(0);
+    }
+}
 int dividepipe(char* token[]) //파이프라인 나누기
 {
 int a=0; // 파이프 개수
@@ -38,6 +50,7 @@ for (int i = 0; token[i] != NULL; i++) {
 }
 cmds[cmd][cmdline] = NULL; 
 pipeline(cmds,b);
+return 1;
 // 마지막 명령어 끝 표시 << 이거 안하면 에러 남
 
 // printf("파이프라인 개수: %d\n", a);
@@ -51,10 +64,44 @@ pipeline(cmds,b);
 
 
 }
-void pipeline(char* cmds[][MAX],int cmd) //파이프라인 구현
-{
+void pipeline(char* cmds[][MAX], int cmd) {
+    int pipes = cmd - 1;
+    int descrip[pipes * 2];
 
-}
+    for (int i = 0; i < pipes; i++) {
+        if (pipe(descrip + 2*i) < 0) {
+            perror("pipe");
+			return;
+        }
+    }
+
+    for (int c = 0; c < cmd; c++) {
+        pid_t pid = fork();
+        if (pid < 0) {
+            perror("fork");
+			return;
+        }
+        if (pid == 0) {
+            if (c > 0)
+                dup2(descrip[2*(c-1)], STDIN_FILENO);
+            if (c < pipes)
+                dup2(descrip[2*c + 1], STDOUT_FILENO);
+            for (int j = 0; j < 2*pipes; j++)
+                close(descrip[j]);
+            execvp(cmds[c][0], cmds[c]);
+            perror("execvp");
+            exit(1);
+        }
+    }
+	for (int j = 0; j < 2*pipes; j++)
+	        close(descrip[j]);
+	for (int c = 0; c < cmd; c++)
+	        wait(NULL);
+	 }
+
+
+
+
 void addspace(char* line) //다중 명령어랑 파이프라인 양옆으로 공백 추가
 {
 	char buf[MAX * 2] = { 0 };
@@ -69,8 +116,8 @@ void addspace(char* line) //다중 명령어랑 파이프라인 양옆으로 공
 			buf[j++] = line[i];
 			buf[j++] = ' ';
 		}
-		// 단일 |, ;, , 처리
-		else if (line[i] == '|' || line[i] == ';' || line[i] == ',')
+		// 단일 |, ;, , &처리
+		else if (line[i] == '|' || line[i] == ';' || line[i] == ','||line[i] == '&')
 		{
 			buf[j++] = ' ';
 			buf[j++] = line[i];
@@ -124,8 +171,21 @@ int prompt(char* token[])
 		{
 			return pwd(token, num);
 		}
-		else
-			return 0;
+		else { //외부 명령어 처리 없으면 오류
+			pid_t pid = fork();
+			if (pid < 0) {
+				perror("fork");
+				return 0;
+			}
+			if (pid == 0) {
+				
+				execvp(token[0], token);
+				perror("execvp");  
+				exit(1);
+			}
+			wait(NULL);
+			return 1;
+		}
 	}
 }
 void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기준으로 왼쪽과 오른쪽으로 나눔
@@ -315,13 +375,28 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 				token = strtok(NULL, " ");
 			}
 			nospace[i] = NULL;
-
-			for (int j = 0; j < i; j++)
-				printf("토큰[%d]: %s\n", j, nospace[j]);
-			mulprom(nospace);
-			prindir();
+			int bg = 0;
+        if (i > 0 && strcmp(nospace[i-1], "&") == 0) {
+            bg = 1;
+            nospace[--i] = NULL;  // 마지막 "&" 토큰 제거
+        }
+        nospace[i] = NULL;
+		if (i >0 && strcmp(nospace[0], "exit") == 0)   // exit 구현현
+		{
+			printf("logout");
+			exit(0);
 		}
+        // 분기: bg면 백그라운드
+        if (bg) 
+		{
+            goback(nospace);
+		}
+			else{
+				mulprom(nospace);
+				prindir();
+				}
 	}
+}
 	
 
 	void prindir(void)
@@ -342,7 +417,5 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 
 	int main(void)
 	{
-		printf("ㅎ");
-		prindir();
 		scan();
 	}
