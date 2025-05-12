@@ -216,9 +216,9 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 			if (check == 1)
 			{
 				mulprom(sorttok2);
-				break;
+				return;
 			}
-			else break;
+			else return;
 
 		}
 		else if (strcmp(token[i], "||") == 0)
@@ -241,9 +241,9 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 			if (check == 0)
 			{
 				mulprom(sorttok2);
-				break;
+				return;
 			}
-			else break;
+			else return;
 		}
 		else if (strcmp(token[i], ";") == 0)
 		{
@@ -264,7 +264,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 			check = yesnopipe(sorttok);
 
 			mulprom(sorttok2);
-			break;
+			return;
 		}
 		else if (strcmp(token[i], ",") == 0)
 		{
@@ -286,7 +286,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 			check = yesnopipe(sorttok);
 
 			mulprom(sorttok2);
-			break;
+			return;
 		}
 		
 			
@@ -338,7 +338,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 		}
 		else
 		{
-			fprintf(stderr, "cd error");
+			fprintf(stderr, "cd error\n");
 			return 0;
 		}
 		
@@ -347,7 +347,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 	{
 		if (num > 1)
 		{
-			fprintf(stderr, "pwd error");
+			fprintf(stderr, "pwd error\n");
 			return 0;
 		}
 		else
@@ -408,7 +408,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 		}
 		else
 		{
-			printf("directory error");
+			printf("directory error\n");
 		}
 		printf("\n");
 		printf("$");
