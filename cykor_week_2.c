@@ -393,7 +393,7 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 		}
 			else{
 				mulprom(nospace);
-				prindir();
+				prinnow();
 				}
 	}
 }
@@ -414,9 +414,19 @@ void mulprom(char* token[])    //다중 명령어 처리 = 다중 명령어 기�
 		printf("$");
 
 	}
+	void prinnow(void)  //현재 user 네임, 현재 호스트네임 출력력
+	{
+	    char* user = getenv("USER");
+		char hostname[MAX];
+		gethostname(hostname,sizeof(hostname));
+		printf("%s@%s",user,hostname);
+		prindir();
+
+	}
 
 	int main(void)
 	{
+		prinnow();
 		prindir();
 		scan();
 	}
